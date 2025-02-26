@@ -1,0 +1,84 @@
+Te queria preguntar como haces o como hago para por ejemplo en el de arreglo, meter variables a un arreglo o que logica usas con lo de librosprestados
+ChatGPT Plus
+Para almacenar datos en un arreglo dinámico como libros_prestados, la lógica básica que utilizo es la siguiente:
+
+Concepto Clave:
+Los arreglos dinámicos son espacios de memoria asignados en tiempo de ejecución (new int[size]). En este caso, libros_prestados es un arreglo de enteros que cuenta cuántas veces se ha prestado cada libro.
+
+Pasos para agregar valores a un arreglo dinámico en C++
+Crear el arreglo dinámico:
+
+cpp
+Copiar
+Editar
+int* crear_arreglo(int size) {
+    int* arr = new int[size];  // Se reserva memoria para 'size' enteros
+    for (int i = 0; i < size; i++) {
+        arr[i] = 0;  // Se inicializan todos los valores en 0
+    }
+    return arr;  // Se devuelve el puntero al arreglo
+}
+Esto es equivalente a int arr[size], pero con memoria dinámica (new).
+
+Actualizar el valor de un índice específico:
+
+cpp
+Copiar
+Editar
+libros_prestados[l]++;  // Se incrementa el conteo del libro con ID 'l'
+Si l = 3, entonces libros_prestados[3] aumenta en 1.
+Se hace esto cada vez que se registra un préstamo.
+
+Ejemplo en la función init_lista()
+
+cpp
+Copiar
+Editar
+void init_lista() {
+    for (int i = 0; i < np; i++) {  // Se crean np préstamos aleatorios
+        int u = rand() % nu;  // Usuario aleatorio
+        int l = rand() % nl;  // Libro aleatorio
+        int g = rand() % ng;  // Género aleatorio
+        prestamos.insertar(Prestamo(u, l, g));  // Se almacena el préstamo
+        libros_prestados[l]++;  // Se actualiza el contador de préstamos del libro
+        generos_prestados[g]++;  // Se actualiza el contador de préstamos del género
+    }
+}
+Aquí, cada vez que un libro es prestado, incrementamos su contador en libros_prestados.
+
+Acceder e imprimir los valores del arreglo:
+
+cpp
+Copiar
+Editar
+void mostrar_libros_prestados() {
+    cout << "Arreglo de libros prestados:" << endl;
+    for (int i = 0; i < nl; i++) {
+        cout << "Libro " << i << ": " << libros_prestados[i] << " préstamos" << endl;
+    }
+    cout << endl;
+}
+Esto recorre el arreglo y muestra cuántas veces se prestó cada libro.
+
+Eliminar el arreglo dinámico después de usarlo:
+
+cpp
+Copiar
+Editar
+void destruir_arreglo(int* arr) {
+    delete[] arr;  // Se libera la memoria reservada
+}
+En la función ~Biblioteca(), llamamos a esta función para liberar la memoria.
+
+¿Cómo agregar otros valores en el arreglo?
+Si en lugar de contar préstamos, quisieras guardar otros datos (por ejemplo, los IDs de los libros más prestados), podrías usar una lógica similar:
+
+Modificar libros_prestados para almacenar IDs en lugar de conteos:
+cpp
+Copiar
+Editar
+int* libros_ids = crear_arreglo(nl);  // Un nuevo arreglo para almacenar IDs
+Asignar valores en función de ciertas condiciones:
+cpp
+Copiar
+Editar
