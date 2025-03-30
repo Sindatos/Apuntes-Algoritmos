@@ -4,36 +4,6 @@
 
 using namespace std; // Uso del espacio de nombres estándar
 
-// Función para crear una matriz dinámica de f filas y c columnas
-int** crear_mat(int f, int c) {
-    int** m = new int*[f]; // Crear arreglo de punteros
-    for (int i = 0; i < f; i++) {
-        m[i] = new int[c]; // Crear cada fila
-        for (int j = 0; j < c; j++) {
-            m[i][j] = 0; // Inicializar con 0
-        }
-    }
-    return m; // Retornar la matriz creada
-}
-
-// Función para liberar la memoria ocupada por la matriz
-void destruir_mat(int** m, int f) {
-    for (int i = 0; i < f; i++) {
-        delete[] m[i]; // Eliminar cada fila
-    }
-    delete[] m; // Eliminar el arreglo de punteros
-}
-
-// Función para imprimir la matriz en consola
-void print_mat(int** m, int f, int c) {
-    for (int i = 0; i < f; i++) {
-        for (int j = 0; j < c; j++) {
-            cout << m[i][j] << "\t"; // Imprimir cada valor separado por tabulación
-        }
-        cout << endl; // Nueva línea por cada fila
-    }
-    cout << endl; // Línea en blanco al final
-}
 
 // Clase para representar productos en la tienda
 class Productotienda {
@@ -503,16 +473,15 @@ public:
 class Tienda {
 private:
     ListaEnlazada<Productotienda> Productoss; // Lista de productos
-    int** matriz; // Matriz auxiliar
     int no, nc, np, nz; // Parámetros para generación aleatoria
 
 public:
     Tienda(int o = 20, int c = 20, int p = 20, int z = 200) : no(o), nc(c), np(p), nz(z) {
-        matriz = crear_mat(nc, np); // Crear la matriz
+
     }
 
     ~Tienda() {
-        destruir_mat(matriz, nc); // Liberar memoria
+
     }
 
     // Inicializa la lista con productos aleatorios
@@ -565,16 +534,25 @@ int main() {
     store.print();      // Mostrar productos
 
     // Solicitar al usuario un rango de precios
-    cout << "Busqueda: ";
-    int precioMin, precioMax;
-    cout << "Ingrese el rango minimo de precio: " << endl;
-    cin >> precioMin;
-    cout << "Ingrese el rango maximo de precio: " << endl;
-    cin >> precioMax;
+    int opcion = 1; // Variable de control
 
-    // Realizar búsqueda por rango de precios
-    store.busquedabinaria(precioMin, precioMax);
-    cout << endl;
+    while (opcion == 1) {
+        cout << "Busqueda de productos por rango de precio" << endl;
+        int precioMin, precioMax;
+        cout << "Ingrese el rango minimo de precio: " << endl;
+        cin >> precioMin;
+        cout << "Ingrese el rango maximo de precio: " << endl;
+        cin >> precioMax;
+    
+        // Realizar búsqueda por rango de precios
+        store.busquedabinaria(precioMin, precioMax);
+        cout << endl;
+    
+        // Preguntar al usuario si desea buscar otra vez
+        cout << "¿Desea realizar otra búsqueda? (1 = Sí, 0 = No): ";
+        cin >> opcion;
+        cout << endl;
+    }
 
     return 0; // Fin del programa
 }
