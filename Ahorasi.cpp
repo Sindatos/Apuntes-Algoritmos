@@ -173,117 +173,249 @@ public:
         cout << "nullptr" << endl;
     }
 
-    // Funciones split, merge y mergeSort para ordenamiento
-    Nodo<T>* split(Nodo<T>* cabeza) {
-        if (cabeza == nullptr || cabeza->getSiguiente() == nullptr) {
-            return nullptr;
-        }
-
-        Nodo<T>* slow = cabeza;
-        Nodo<T>* fast = cabeza->getSiguiente();
-
-        while (fast != nullptr && fast->getSiguiente() != nullptr) {
-            slow = slow->getSiguiente();
-            fast = fast->getSiguiente()->getSiguiente();
-        }
-
-        Nodo<T>* mid = slow->getSiguiente();
-        slow->setSiguiente(nullptr);
-        return mid;
+    // Intercambia objetos completos
+    void swap(T& a, T& b) {
+        T temp = a;
+        a = b;
+        b = temp;
     }
-
-    Nodo<T>* merge(Nodo<T>* left, Nodo<T>* right) {
-        Nodo<T> dummy(left->getValor());
-        Nodo<T>* tail = &dummy;
-
-        while (left != nullptr && right != nullptr) {
-            if (left->getValor().getprecio() <= right->getValor().getprecio()) {
-                tail->setSiguiente(left);
-                left = left->getSiguiente();
-            } else {
-                tail->setSiguiente(right);
-                right = right->getSiguiente();
-            }
-            tail = tail->getSiguiente();
-        }
-
-        tail->setSiguiente(left ? left : right);
-        return dummy.getSiguiente();
-    }
-
-    Nodo<T>* mergeSort(Nodo<T>* cabeza) {
-        if (cabeza == nullptr || cabeza->getSiguiente() == nullptr) {
-            return cabeza;
-        }
-
-        Nodo<T>* mid = split(cabeza);
-        Nodo<T>* left = mergeSort(cabeza);
-        Nodo<T>* right = mergeSort(mid);
-        return merge(left, right);
-    }
-
-    void mergeSort() {
-        cabeza = mergeSort(cabeza);
-    }
-
-        void bubbleSort() {
+    
+    // Bubble Sort adaptado
+    void bubbleSort() {
         if (!cabeza) return;
         for (int step = 0; step < size - 1; ++step) {
-            bool swapped = false;
             Nodo<T>* actual = cabeza;
             Nodo<T>* siguiente = cabeza->getSiguiente();
-            for (int i = 0; i < size - step - 1; ++i) {
+            bool swapped = false;
+    
+            while (siguiente) {
                 if (actual->getValor().getprecio() > siguiente->getValor().getprecio()) {
-                    T temp = actual->getValor();
-                    actual->setValor(siguiente->getValor());
-                    siguiente->setValor(temp);
+                    swap(actual->getValor(), siguiente->getValor());
                     swapped = true;
                 }
-                actual = actual->getSiguiente();
+                actual = siguiente;
                 siguiente = siguiente->getSiguiente();
             }
+    
             if (!swapped) break;
         }
     }
-
+    
+    // Selection Sort adaptado
     void selectionSort() {
-        Nodo<T>* stepNode = cabeza;
-        while (stepNode) {
-            Nodo<T>* minNode = stepNode;
-            Nodo<T>* current = stepNode->getSiguiente();
-            while (current) {
-                if (current->getValor().getprecio() < minNode->getValor().getprecio())
-                    minNode = current;
-                current = current->getSiguiente();
-            }
-            if (minNode != stepNode) {
-                T temp = stepNode->getValor();
-                stepNode->setValor(minNode->getValor());
-                minNode->setValor(temp);
-            }
-            stepNode = stepNode->getSiguiente();
-        }
-    }
-
-    void insertionSort() {
-        Nodo<T>* sorted = nullptr;
         Nodo<T>* actual = cabeza;
         while (actual) {
+            Nodo<T>* minNode = actual;
             Nodo<T>* siguiente = actual->getSiguiente();
+    
+            while (siguiente) {
+                if (siguiente->getValor().getprecio() < minNode->getValor().getprecio()) {
+                    minNode = siguiente;
+                }
+                siguiente = siguiente->getSiguiente();
+            }
+    
+            if (minNode != actual) {
+                swap(minNode->getValor(), actual->getValor());
+            }
+            actual = actual->getSiguiente();
+        }
+    }
+    
+    // Insertion Sort adaptado
+    void insertionSort() {
+        if (!cabeza || !cabeza->getSiguiente()) return;
+    
+        Nodo<T>* sorted = nullptr;
+        Nodo<T>* actual = cabeza;
+    
+        while (actual) {
+            Nodo<T>* siguiente = actual->getSiguiente();
+    
             if (!sorted || actual->getValor().getprecio() < sorted->getValor().getprecio()) {
                 actual->setSiguiente(sorted);
                 sorted = actual;
             } else {
                 Nodo<T>* temp = sorted;
-                while (temp->getSiguiente() && temp->getSiguiente()->getValor().getprecio() < actual->getValor().getprecio())
+                while (temp->getSiguiente() && temp->getSiguiente()->getValor().getprecio() < actual->getValor().getprecio()) {
                     temp = temp->getSiguiente();
+                }
                 actual->setSiguiente(temp->getSiguiente());
                 temp->setSiguiente(actual);
             }
+    
             actual = siguiente;
         }
+    
         cabeza = sorted;
     }
+    
+    // Merge Sort adaptado
+    Nodo<T>* split(Nodo<T>* inicio) {
+        Nodo<T>* slow = inicio;
+        Nodo<T>* fast = inicio->getSiguiente();
+    
+        while (fast && fast->getSiguiente()) {
+            slow = slow->getSiguiente();
+            fast = fast->getSiguiente()->getSiguiente();
+        }
+    
+        Nodo<T>* medio = slow->getSiguiente();
+        slow->setSiguiente(nullptr);
+        return medio;
+    }
+    
+    Nodo<T>* merge(Nodo<T>* izquierda, Nodo<T>* derecha) {
+    Nodo<T>* resultado = nullptr;
+
+    if (!izquierda)
+        return derecha;
+    else if (!derecha)
+        return izquierda;
+
+    if (izquierda->getValor().getprecio() <= derecha->getValor().getprecio()) {
+        resultado = izquierda;
+        resultado->setSiguiente(merge(izquierda->getSiguiente(), derecha));
+    } else {
+        resultado = derecha;
+        resultado->setSiguiente(merge(izquierda, derecha->getSiguiente()));
+    }
+
+    return resultado;
+}
+    
+    Nodo<T>* mergeSort(Nodo<T>* inicio) {
+        if (!inicio || !inicio->getSiguiente()) return inicio;
+    
+        Nodo<T>* medio = split(inicio);
+        Nodo<T>* izquierda = mergeSort(inicio);
+        Nodo<T>* derecha = mergeSort(medio);
+    
+        return merge(izquierda, derecha);
+    }
+    
+    void mergeSort() {
+        cabeza = mergeSort(cabeza);
+    }
+    
+    // Quick Sort adaptado
+    Nodo<T>* getTail(Nodo<T>* nodo) {
+        while (nodo && nodo->getSiguiente())
+            nodo = nodo->getSiguiente();
+        return nodo;
+    }
+    
+    Nodo<T>* partition(Nodo<T>* low, Nodo<T>* high) {
+        T pivot = high->getValor();
+        Nodo<T>* i = low;
+        Nodo<T>* j = low;
+    
+        while (j != high) {
+            if (j->getValor().getprecio() <= pivot.getprecio()) {
+                swap(i->getValor(), j->getValor());
+                i = i->getSiguiente();
+            }
+            j = j->getSiguiente();
+        }
+        swap(i->getValor(), high->getValor());
+        return i;
+    }
+    
+    Nodo<T>* getAnterior(Nodo<T>* inicio, Nodo<T>* nodo) {
+        if (inicio == nodo) return nullptr;
+        while (inicio && inicio->getSiguiente() != nodo) {
+            inicio = inicio->getSiguiente();
+        }
+        return inicio;
+    }
+    
+    void quickSortRecursivo(Nodo<T>* low, Nodo<T>* high) {
+        if (!low || low == high || low == high->getSiguiente()) return;
+    
+        Nodo<T>* pivot = partition(low, high);
+        quickSortRecursivo(low, getAnterior(low, pivot));
+        quickSortRecursivo(pivot->getSiguiente(), high);
+    }
+    
+    void quickSort() {
+        Nodo<T>* ultimo = getTail(cabeza);
+        quickSortRecursivo(cabeza, ultimo);
+    }
+    
+    // HeapSort adaptado
+    void heapify(T arr[], int n, int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+    
+        if (left < n && arr[left].getprecio() > arr[largest].getprecio())
+            largest = left;
+        if (right < n && arr[right].getprecio() > arr[largest].getprecio())
+            largest = right;
+        if (largest != i) {
+            swap(arr[i], arr[largest]);
+            heapify(arr, n, largest);
+        }
+    }
+    
+    void heapSort() {
+        if (!cabeza) return;
+    
+        T* arr = new T[size];
+        Nodo<T>* actual = cabeza;
+        for (int i = 0; i < size; i++) {
+            arr[i] = actual->getValor();
+            actual = actual->getSiguiente();
+        }
+    
+        for (int i = size / 2 - 1; i >= 0; i--)
+            heapify(arr, size, i);
+        for (int i = size - 1; i > 0; i--) {
+            swap(arr[0], arr[i]);
+            heapify(arr, i, 0);
+        }
+    
+        actual = cabeza;
+        for (int i = 0; i < size; i++) {
+            actual->setValor(arr[i]);
+            actual = actual->getSiguiente();
+        }
+    
+        delete[] arr;
+    }
+    
+    // ShellSort adaptado
+    void shellSort() {
+        if (!cabeza) return;
+    
+        T* arr = new T[size];
+        Nodo<T>* actual = cabeza;
+        for (int i = 0; i < size; i++) {
+            arr[i] = actual->getValor();
+            actual = actual->getSiguiente();
+        }
+    
+        for (int gap = size / 2; gap > 0; gap /= 2) {
+            for (int i = gap; i < size; i++) {
+                T temp = arr[i];
+                int j = i;
+                while (j >= gap && arr[j - gap].getprecio() > temp.getprecio()) {
+                    arr[j] = arr[j - gap];
+                    j -= gap;
+                }
+                arr[j] = temp;
+            }
+        }
+    
+        actual = cabeza;
+        for (int i = 0; i < size; i++) {
+            actual->setValor(arr[i]);
+            actual = actual->getSiguiente();
+        }
+    
+        delete[] arr;
+    }
+
 
     void countingSort() {
         if (!cabeza) return;
@@ -346,130 +478,6 @@ public:
         for (int i = 0; i < n; i++) arr[i] = output[i];
         delete[] output;
     }
-
-    void heapify(int arr[], int n, int i) {
-        int largest = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-        if (left < n && arr[left] > arr[largest]) largest = left;
-        if (right < n && arr[right] > arr[largest]) largest = right;
-        if (largest != i) {
-            swap(arr[i], arr[largest]);
-            heapify(arr, n, largest);
-        }
-    }
-
-    void heapSort() {
-        if (!cabeza) return;
-        int* precios = new int[size];
-        Nodo<T>* actual = cabeza;
-        for (int i = 0; i < size; i++) {
-            precios[i] = actual->getValor().getprecio();
-            actual = actual->getSiguiente();
-        }
-        for (int i = size / 2 - 1; i >= 0; i--)
-            heapify(precios, size, i);
-        for (int i = size - 1; i >= 0; i--) {
-            swap(precios[0], precios[i]);
-            heapify(precios, i, 0);
-        }
-        actual = cabeza;
-        for (int i = 0; i < size; i++) {
-            Productotienda temp = actual->getValor();
-            temp.setprecio(precios[i]);
-            actual->setValor(temp);
-            actual = actual->getSiguiente();
-        }
-        delete[] precios;
-    }
-
-    void shellSort() {
-        if (!cabeza) return;
-        int* precios = new int[size];
-        Nodo<T>* actual = cabeza;
-        for (int i = 0; i < size; i++) {
-            precios[i] = actual->getValor().getprecio();
-            actual = actual->getSiguiente();
-        }
-        for (int gap = size / 2; gap > 0; gap /= 2) {
-            for (int i = gap; i < size; i++) {
-                int temp = precios[i];
-                int j;
-                for (j = i; j >= gap && precios[j - gap] > temp; j -= gap) {
-                    precios[j] = precios[j - gap];
-                }
-                precios[j] = temp;
-            }
-        }
-        actual = cabeza;
-        for (int i = 0; i < size; i++) {
-            Productotienda temp = actual->getValor();
-            temp.setprecio(precios[i]);
-            actual->setValor(temp);
-            actual = actual->getSiguiente();
-        }
-        delete[] precios;
-    }
-    
-    //Quicksort
-    // Función auxiliar para hacer swap de dos enteros
-    void swap(int& a, int& b) {
-        int t = a;
-        a = b;
-        b = t;
-    }
-    
-    // Función auxiliar de partición para quicksort
-    int partition(int arr[], int low, int high) {
-        int pivot = arr[high];  // pivote: último elemento
-        int i = low - 1;         // índice del elemento menor
-    
-        for (int j = low; j < high; j++) {
-            if (arr[j] <= pivot) {
-                i++;
-                swap(arr[i], arr[j]);
-            }
-        }
-        swap(arr[i + 1], arr[high]);
-        return i + 1;
-    }
-    
-    // Implementación recursiva de quicksort
-    void quickSortArray(int arr[], int low, int high) {
-        if (low < high) {
-            int pi = partition(arr, low, high);
-            quickSortArray(arr, low, pi - 1);
-            quickSortArray(arr, pi + 1, high);
-        }
-    }
-    
-    // Método público para aplicar quicksort a la lista enlazada
-    void quickSort() {
-        if (!cabeza) return;
-    
-        // Paso 1: Copiar precios a arreglo temporal
-        int* precios = new int[size];
-        Nodo<T>* actual = cabeza;
-        for (int i = 0; i < size; i++) {
-            precios[i] = actual->getValor().getprecio();
-            actual = actual->getSiguiente();
-        }
-    
-        // Paso 2: Aplicar quicksort
-        quickSortArray(precios, 0, size - 1);
-    
-        // Paso 3: Asignar los precios ordenados a los nodos
-        actual = cabeza;
-        for (int i = 0; i < size; i++) {
-            Productotienda temp = actual->getValor();
-            temp.setprecio(precios[i]);
-            actual->setValor(temp);
-            actual = actual->getSiguiente();
-        }
-    
-        delete[] precios;
-    }
-
 
     // Buscar productos en un rango de precios usando búsqueda binaria
     void busquedaBinariaRango(int precioMin, int precioMax) {
@@ -556,7 +564,7 @@ public:
 
     // Ordenar la lista por precio usando merge sort
     void mergeSort() {
-        Productoss.mergeSort();
+        Productoss.shellSort();
     }
 
     // Realizar búsqueda binaria en rango de precios
