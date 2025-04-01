@@ -174,13 +174,13 @@ public:
     }
 
     // Funciones split, merge y mergeSort para ordenamiento
-    Nodo<T>* split(Nodo<T>* head) {
-        if (head == nullptr || head->getSiguiente() == nullptr) {
+    Nodo<T>* split(Nodo<T>* cabeza) {
+        if (cabeza == nullptr || cabeza->getSiguiente() == nullptr) {
             return nullptr;
         }
 
-        Nodo<T>* slow = head;
-        Nodo<T>* fast = head->getSiguiente();
+        Nodo<T>* slow = cabeza;
+        Nodo<T>* fast = cabeza->getSiguiente();
 
         while (fast != nullptr && fast->getSiguiente() != nullptr) {
             slow = slow->getSiguiente();
@@ -211,13 +211,13 @@ public:
         return dummy.getSiguiente();
     }
 
-    Nodo<T>* mergeSort(Nodo<T>* head) {
-        if (head == nullptr || head->getSiguiente() == nullptr) {
-            return head;
+    Nodo<T>* mergeSort(Nodo<T>* cabeza) {
+        if (cabeza == nullptr || cabeza->getSiguiente() == nullptr) {
+            return cabeza;
         }
 
-        Nodo<T>* mid = split(head);
-        Nodo<T>* left = mergeSort(head);
+        Nodo<T>* mid = split(cabeza);
+        Nodo<T>* left = mergeSort(cabeza);
         Nodo<T>* right = mergeSort(mid);
         return merge(left, right);
     }
